@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/StoryApp/favicon.png" />
+    <title>App</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="manifest" href="/StoryApp/assets/manifest-DwfSY4zs.json" />
+    <link rel="stylesheet" href="/src/public/favicon.png" />
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .catch((err) => console.error("SW failed:", err));
+      }
+    </script>
+    <script type="module" crossorigin src="/StoryApp/assets/index-ft96cWew.js"></script>
+    <link rel="stylesheet" crossorigin href="/StoryApp/assets/index-BaQf0oaF.css">
+  <link rel="manifest" href="/StoryApp/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/StoryApp/registerSW.js"></script></head>
+  <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <header></header>
+    <main tabindex="-1" id="main-content" class="main-content"></main>
+  </body>
+</html>
