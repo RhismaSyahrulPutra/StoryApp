@@ -10,7 +10,7 @@ import {
 export default class StoriesPage {
   constructor() {
     this.isShowingSavedStories = false;
-    this.map = null; // Menambahkan properti map
+    this.map = null;
   }
 
   async render() {
@@ -44,9 +44,8 @@ export default class StoriesPage {
       this.toggleStoriesView()
     );
 
-    // Memastikan peta ditambahkan setelah stories dimuat
     if (!this.map) {
-      this.map = L.map("map").setView([-2.5489, 118.0149], 5); // Inisialisasi peta
+      this.map = L.map("map").setView([-2.5489, 118.0149], 5);
       const tileLayers = {
         OpenStreetMap: L.tileLayer(
           "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -142,7 +141,6 @@ export default class StoriesPage {
       `;
       this.storiesList.appendChild(storyElement);
 
-      // Tambahkan marker jika cerita memiliki koordinat
       if (story.lat && story.lon) {
         const marker = L.marker([story.lat, story.lon]).addTo(this.map);
         marker.bindPopup(`<b>${story.name}</b><br>${story.description}`);
