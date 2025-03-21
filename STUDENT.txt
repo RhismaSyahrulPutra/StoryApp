@@ -1,2 +1,2 @@
-APP_URL=<url_aplikasi>
+APP_URL=<https://rhismasyahrulputra.github.io/StoryApp/>
 MAP_SERVICE_API_KEY=<api_key>

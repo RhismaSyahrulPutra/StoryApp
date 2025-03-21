@@ -33,17 +33,95 @@ export default class StoriesPage {
   }
 
   async afterRender() {
-    this.storiesList = document.getElementById("storiesList");
-    this.viewSavedStoriesButton = document.getElementById("viewSavedStories");
+    const storiesList = document.getElementById("storiesList");
+    const addStoryButton = document.getElementById("addStoryButton");
 
-    document
-      .getElementById("addStoryButton")
-      .addEventListener("click", this.handleAddStoryClick);
-    this.viewSavedStoriesButton.addEventListener("click", () =>
-      this.toggleStoriesView()
-    );
+    if (!storiesList) {
+      console.error("Elemen storiesList tidak ditemukan!");
+      return;
+    }
 
-    this.loadAllStories();
+    if (addStoryButton) {
+      addStoryButton.removeEventListener("click", this.handleAddStoryClick);
+      addStoryButton.addEventListener("click", this.handleAddStoryClick);
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.warn(
+          "Token tidak ditemukan! Pengguna akan diarahkan ke login..."
+        );
+        setTimeout(() => {
+          window.location.hash = "#/login";
+        }, 3000);
+        return;
+      }
+
+      const response = await getAllStories(token);
+      storiesList.innerHTML = "";
+
+      if (!response?.listStory || response.listStory.length === 0) {
+        storiesList.innerHTML = "<p>Tidak ada cerita ditemukan.</p>";
+        return;
+      }
+
+      if (this.map) {
+        this.map.remove();
+      }
+
+      setTimeout(() => {
+        this.map = L.map("map").setView([-2.5489, 118.0149], 5);
+
+        const tileLayers = {
+          OpenStreetMap: L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            { attribution: "&copy; OpenStreetMap contributors" }
+          ),
+          "CartoDB Positron": L.tileLayer(
+            "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+            { attribution: "&copy; CartoDB" }
+          ),
+          "Stamen Terrain": L.tileLayer(
+            "https://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg",
+            { attribution: "&copy; Stamen Design" }
+          ),
+        };
+
+        tileLayers.OpenStreetMap.addTo(this.map);
+        L.control.layers(tileLayers).addTo(this.map);
+
+        response.listStory.forEach((story) => {
+          const storyElement = document.createElement("div");
+          storyElement.innerHTML = `
+            <img src="${story.photoUrl}" alt="${story.name}" width="200" />
+            <h2>${story.name}</h2>
+            <p>${story.description}</p>
+            <p><small>Dibuat pada: ${new Date(
+              story.createdAt
+            ).toLocaleString()}</small></p>
+            <button class="story-detail-button" data-id="${
+              story.id
+            }">Lihat Detail</button>
+          `;
+
+          storiesList.appendChild(storyElement);
+
+          if (story.lat && story.lon) {
+            const marker = L.marker([story.lat, story.lon]).addTo(this.map);
+            marker.bindPopup(`<b>${story.name}</b><br>${story.description}`);
+          }
+        });
+
+        document.querySelectorAll(".story-detail-button").forEach((button) => {
+          button.removeEventListener("click", this.handleStoryDetailClick);
+          button.addEventListener("click", this.handleStoryDetailClick);
+        });
+      }, 100);
+    } catch (error) {
+      storiesList.innerHTML = `<p style="color: red;">Gagal memuat cerita: ${error.message}</p>`;
+    }
   }
 
   async loadAllStories() {
