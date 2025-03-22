@@ -42,3 +42,17 @@ self.addEventListener("push", (event) => {
 self.addEventListener("fetch", (event) => {
   console.log("Fetching:", event.request.url);
 });
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/StoryApp/src/sw.js") // Sesuaikan path
+    .then((reg) => console.log("Service Worker registered", reg))
+    .catch((err) => console.log("Service Worker registration failed", err));
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/StoryApp/src/sw.js") // Sesuaikan path
+    .then((reg) => console.log("Service Worker registered", reg))
+    .catch((err) => console.log("Service Worker registration failed", err));
+}

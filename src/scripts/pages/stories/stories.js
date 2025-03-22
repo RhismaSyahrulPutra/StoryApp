@@ -28,7 +28,7 @@ export default class StoriesPage {
         <div id="storiesList" class="stories-list" tabindex="-1" aria-live="polite">
           Memuat cerita...
         </div>
-        <div id="map" class="stories-map"></div> <!-- Map di sini -->
+        <div id="map" class="stories-map"></div>
       </section>
     `;
   }
@@ -93,7 +93,23 @@ export default class StoriesPage {
     }
   }
 
-  renderStories(stories) {
+  async loadSavedStories() {
+    this.isShowingSavedStories = true;
+    this.viewSavedStoriesButton.innerHTML = `<i class="fa-solid fa-book"></i> Lihat Semua Story`;
+
+    const savedStories = await getData(STORE_NAMES.SAVED_STORIES);
+    this.renderStories(savedStories, true);
+  }
+
+  toggleStoriesView() {
+    if (this.isShowingSavedStories) {
+      this.loadAllStories();
+    } else {
+      this.loadSavedStories();
+    }
+  }
+
+  renderStories(stories, isSavedStories = false) {
     this.storiesList.innerHTML = "";
 
     if (stories.length === 0) {
@@ -105,8 +121,8 @@ export default class StoriesPage {
       iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
       shadowUrl:
         "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
+      iconSize: [30, 45],
+      iconAnchor: [15, 45],
       popupAnchor: [1, -34],
       shadowSize: [41, 41],
     });
@@ -121,6 +137,16 @@ export default class StoriesPage {
         <p><small>Dibuat pada: ${new Date(
           story.createdAt
         ).toLocaleString()}</small></p>
+        <button class="story-detail-button" data-id="${story.id}">
+          <i class="fa-solid fa-eye"></i> Lihat Detail
+        </button>
+        <button class="${
+          isSavedStories ? "remove-story-button" : "save-story-button"
+        }" data-story='${JSON.stringify(story)}'>
+          <i class="fa-solid ${
+            isSavedStories ? "fa-trash" : "fa-bookmark"
+          }"></i> ${isSavedStories ? "Hapus dari Simpan" : "Simpan Story"}
+        </button>
       `;
       this.storiesList.appendChild(storyElement);
 
