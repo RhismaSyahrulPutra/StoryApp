@@ -2,18 +2,18 @@
   "name": "Story App",
   "short_name": "StoryApp",
   "description": "Aplikasi berbagi cerita berbasis web.",
-  "start_url": ".",
+  "start_url": "/StoryApp/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "images/icon-192x192.png",
+      "src": "/StoryApp/images/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "images/icon-512x512.png",
+      "src": "/StoryApp/images/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
@@ -23,10 +23,10 @@
       "name": "Tambah Cerita Baru",
       "short_name": "Tambah Cerita",
       "description": "Buka halaman untuk menambahkan cerita baru",
-      "url": "/add-story",
+      "url": "/StoryApp/add-story",
       "icons": [
         {
-          "src": "images/add-icon.png",
+          "src": "/StoryApp/images/add-icon.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -35,13 +35,13 @@
   ],
   "screenshots": [
     {
-      "src": "images/screenshot/screenshot-desktop.png",
+      "src": "/StoryApp/images/screenshot/screenshot-desktop.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "images/screenshot/screenshot-mobile.png",
+      "src": "/StoryApp/images/screenshot/screenshot-mobile.png",
       "sizes": "375x667",
       "type": "image/png",
       "form_factor": "narrow"
