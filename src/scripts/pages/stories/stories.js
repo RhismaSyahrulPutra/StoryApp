@@ -93,29 +93,23 @@ export default class StoriesPage {
     }
   }
 
-  async loadSavedStories() {
-    this.isShowingSavedStories = true;
-    this.viewSavedStoriesButton.innerHTML = `<i class="fa-solid fa-book"></i> Lihat Semua Story`;
-
-    const savedStories = await getData(STORE_NAMES.SAVED_STORIES);
-    this.renderStories(savedStories, true);
-  }
-
-  toggleStoriesView() {
-    if (this.isShowingSavedStories) {
-      this.loadAllStories();
-    } else {
-      this.loadSavedStories();
-    }
-  }
-
-  renderStories(stories, isSavedStories = false) {
+  renderStories(stories) {
     this.storiesList.innerHTML = "";
 
     if (stories.length === 0) {
       this.storiesList.innerHTML = "<p>Tidak ada story yang tersedia.</p>";
       return;
     }
+
+    const customIcon = L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+      shadowUrl:
+        "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
 
     stories.forEach((story) => {
       const storyElement = document.createElement("div");
@@ -127,22 +121,13 @@ export default class StoriesPage {
         <p><small>Dibuat pada: ${new Date(
           story.createdAt
         ).toLocaleString()}</small></p>
-        <button class="story-detail-button" data-id="${story.id}">
-          <i class="fa-solid fa-eye"></i> Lihat Detail
-        </button>
-        <button class="${
-          isSavedStories ? "remove-story-button" : "save-story-button"
-        }" 
-                data-story='${JSON.stringify(story)}'>
-          <i class="fa-solid ${
-            isSavedStories ? "fa-trash" : "fa-bookmark"
-          }"></i> ${isSavedStories ? "Hapus dari Simpan" : "Simpan Story"}
-        </button>
       `;
       this.storiesList.appendChild(storyElement);
 
       if (story.lat && story.lon) {
-        const marker = L.marker([story.lat, story.lon]).addTo(this.map);
+        const marker = L.marker([story.lat, story.lon], {
+          icon: customIcon,
+        }).addTo(this.map);
         marker.bindPopup(`<b>${story.name}</b><br>${story.description}`);
       }
     });

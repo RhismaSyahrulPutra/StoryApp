@@ -72,11 +72,9 @@ export default class StoriesDetailPage {
       storyCreatedAt.innerHTML = `<p><small>Dibuat pada: ${new Date(
         createdAt
       ).toLocaleString()}</small></p>`;
-      storyLocation.innerHTML = `
-        <p><strong>Lokasi:</strong> ${lat ?? "Tidak tersedia"}, ${
-        lon ?? "Tidak tersedia"
-      }</p>
-      `;
+      storyLocation.innerHTML = `<p><strong>Lokasi:</strong> ${
+        lat ?? "Tidak tersedia"
+      }, ${lon ?? "Tidak tersedia"}</p>`;
 
       document.getElementById("backButton").addEventListener("click", () => {
         window.history.back();
@@ -110,7 +108,18 @@ export default class StoriesDetailPage {
           })
           .addTo(map);
 
-        const marker = L.marker([lat, lon]).addTo(map);
+        const customIcon = L.icon({
+          iconUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+          shadowUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        });
+
+        const marker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
         marker.bindPopup(`<b>${name}</b><br>${description}`).openPopup();
       }
     } catch (error) {

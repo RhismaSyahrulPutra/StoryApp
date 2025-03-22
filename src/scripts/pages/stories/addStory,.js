@@ -19,6 +19,10 @@ export default class AddStoryPage {
 
           <label for="photo"><i class="fa-solid fa-upload"></i> Upload Photo:</label>
           <input type="file" id="photo" name="photo" accept="image/*" required class="photo-upload" />
+          
+          <video id="cameraPreview" autoplay playsinline class="camera-preview"></video>
+          <button type="button" id="capturePhoto" class="capture-photo-button">Capture from Camera</button>
+          <canvas id="canvas" class="canvas-hidden" style="display: none;"></canvas>
 
           <label for="map"><i class="fa-solid fa-map-marker-alt"></i> Select Location:</label>
           <div id="map" class="map-container"></div>
@@ -43,6 +47,10 @@ export default class AddStoryPage {
     const message = document.getElementById("message");
     const latInput = document.getElementById("lat");
     const lonInput = document.getElementById("lon");
+    const cameraPreview = document.getElementById("cameraPreview");
+    const captureButton = document.getElementById("capturePhoto");
+    const canvas = document.getElementById("canvas");
+    let stream = null;
 
     if (L) {
       setTimeout(() => {
@@ -52,6 +60,17 @@ export default class AddStoryPage {
         }).addTo(map);
 
         let marker;
+        const customIcon = L.icon({
+          iconUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+          shadowUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        });
+
         map.on("click", (event) => {
           const { lat, lng } = event.latlng;
           latInput.value = lat.toFixed(6);
@@ -59,11 +78,57 @@ export default class AddStoryPage {
           if (marker) {
             marker.setLatLng([lat, lng]);
           } else {
-            marker = L.marker([lat, lng]).addTo(map);
+            marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
           }
         });
       }, 300);
     }
+
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        cameraPreview.srcObject = stream;
+      } catch (error) {
+        console.error("Error accessing camera:", error);
+        message.innerHTML =
+          "<span style='color: red;'>Camera access denied.</span>";
+      }
+    }
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+        cameraPreview.srcObject = null;
+        stream = null;
+      }
+    }
+
+    captureButton.addEventListener("click", () => {
+      if (!stream) {
+        startCamera();
+        captureButton.textContent = "Ambil Gambar";
+        return;
+      }
+
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      canvas.width = cameraPreview.videoWidth;
+      canvas.height = cameraPreview.videoHeight;
+      context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob((blob) => {
+        const file = new File([blob], "captured_photo.jpg", {
+          type: "image/jpeg",
+        });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        document.getElementById("photo").files = dataTransfer.files;
+      });
+
+      stopCamera();
+      captureButton.textContent = "Capture from Camera";
+    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -112,5 +177,7 @@ export default class AddStoryPage {
       }
       submitButton.disabled = false;
     });
+
+    window.addEventListener("hashchange", stopCamera);
   }
 }
