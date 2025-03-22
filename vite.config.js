@@ -19,7 +19,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       strategies: "injectManifest",
-      srcDir: ".",
+      srcDir: "./",
       filename: "sw.js",
       workbox: {
         globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
